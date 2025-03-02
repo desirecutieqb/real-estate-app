@@ -22,6 +22,6 @@ app.get("/", (req, res) => {
     res.send("This is home route");
 });
 const port = process.env.PORT || 3002;
-app.listen(() => {
+app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
