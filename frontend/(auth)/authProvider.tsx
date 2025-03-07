@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import { Amplify } from "aws-amplify";
 
 import {
@@ -10,6 +11,7 @@ import {
   View,
 } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
+import { useRouter, usePathname } from "next/navigation";
 
 Amplify.configure({
   Auth: {
@@ -27,7 +29,7 @@ const components = {
         <Heading level={3} className="!text-2xl !font-bold">
           DesireCutie
           <span className="text-secondary-500 font-light hover:!text-primary-300">
-            RENT
+            Rent
           </span>
         </Heading>
         <p className="text-muted-foreground mt-2">
@@ -54,43 +56,42 @@ const components = {
       );
     },
   },
-  SignUp:{
-    FormFields(){
-        const {validationErrors} = useAuthenticator();
-        return(
-            <>
-                <Authenticator.SignUp.FormFields />
-                <RadioGroupField
-                    legend="Role"
-                    name="custom:role"
-                    errorMessage={validationErrors?.["custom:role"]}
-                    hasError={!!validationErrors?.["custom:role"]}
-                    isRequired
-                >
-                    <Radio value="tenant">Tenant</Radio>
-                    <Radio value="manager">Manager</Radio>
-
-                </RadioGroupField>
-            </>
-        )
+  SignUp: {
+    FormFields() {
+      const { validationErrors } = useAuthenticator();
+      return (
+        <>
+          <Authenticator.SignUp.FormFields />
+          <RadioGroupField
+            legend="Role"
+            name="custom:role"
+            errorMessage={validationErrors?.["custom:role"]}
+            hasError={!!validationErrors?.["custom:role"]}
+            isRequired
+          >
+            <Radio value="tenant">Tenant</Radio>
+            <Radio value="manager">Manager</Radio>
+          </RadioGroupField>
+        </>
+      );
     },
     Footer() {
-        const { toSignIn } = useAuthenticator();
-        return (
-          <View className="text-center mt-4">
-            <p className="text-muted-foreground">
-              Already have an account?{" "}
-              <button
-                onClick={toSignIn}
-                className="text-primary hover:underline bg-transparent border-none p-0"
-              >
-                Sign In
-              </button>
-            </p>
-          </View>
-        );
-      },
-  }
+      const { toSignIn } = useAuthenticator();
+      return (
+        <View className="text-center mt-4">
+          <p className="text-muted-foreground">
+            Already have an account?{" "}
+            <button
+              onClick={toSignIn}
+              className="text-primary hover:underline bg-transparent border-none p-0"
+            >
+              Sign In
+            </button>
+          </p>
+        </View>
+      );
+    },
+  },
 };
 
 const formFields = {
@@ -136,9 +137,28 @@ const formFields = {
 
 const Auth = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuthenticator((context) => [context.user]);
+  const router = useRouter();
+  const pathname = usePathname();
+  const isAuthPage = pathname.match(/^\/(signin|signup)$/);
+  const isDashboardPage =
+    pathname.startsWith("/manager") || pathname.startsWith("/tenants");
+
+  useEffect(() => {
+    if (user && isAuthPage) {
+      router.push("/");
+    }
+  }, [user, isAuthPage, router]);
+
+  if (!isAuthPage && !isDashboardPage) {
+    return <>{children}</>;
+  }
   return (
     <div className="h-full">
-      <Authenticator components={components} formFields={formFields}>
+      <Authenticator
+        initialState={pathname.includes("signup") ? "signUp" : "signIn "}
+        components={components}
+        formFields={formFields}
+      >
         {() => <>{children}</>}
       </Authenticator>
     </div>
