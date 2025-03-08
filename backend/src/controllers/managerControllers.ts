@@ -22,7 +22,7 @@ export const getManager = async (
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Error retrieving tenant: ${error.message}` });
+      .json({ message: `Error retrieving manager: ${error.message}` });
   }
 };
 export const createManager = async (
@@ -31,7 +31,7 @@ export const createManager = async (
 ): Promise<void> => {
   try {
     const { cognitoId, name, email, phoneNumber } = req.body;
-    const tenant = await prisma.tenant.create({
+    const manager = await prisma.manager.create({
       data: {
         cognitoId,
         name,
@@ -39,10 +39,10 @@ export const createManager = async (
         phoneNumber,
       },
     });
-    res.status(201).json(tenant);
+    res.status(201).json(manager);
   } catch (error: any) {
     res
       .status(500)
-      .json({ message: `Error creating tenant: ${error.message}` });
+      .json({ message: `Error creating manager: ${error.message}` });
   }
 };
