@@ -39,8 +39,7 @@ export const createTenant = async (
         phoneNumber,
       },
     });
-    res.status(201).json(tenant)
-
+    res.status(201).json(tenant);
   } catch (error: any) {
     res
       .status(500)
@@ -52,20 +51,19 @@ export const updateTenant = async (
   res: Response
 ): Promise<void> => {
   try {
-    const {cognitoId} = req.params
+    const { cognitoId } = req.params;
     const { name, email, phoneNumber } = req.body;
+console.log("cognito id: ",cognitoId);
     const updateTenant = await prisma.tenant.update({
-      where:{
-        cognitoId, 
-      },
+      where: { cognitoId: cognitoId, },
       data: {
         name,
         email,
         phoneNumber,
       },
     });
-    res.json(updateTenant)
 
+    res.json(updateTenant);
   } catch (error: any) {
     res
       .status(500)

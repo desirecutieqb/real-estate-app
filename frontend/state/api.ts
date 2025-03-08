@@ -56,20 +56,20 @@ export const api = createApi({
         }
       },
     }),
-    updateTenantSettings = build.mutation<Tenant, {cognitoId: string} & Partial<Tenant>>({
+    updateTenantSettings:build.mutation<Tenant, {cognitoId: string} & Partial<Tenant>>({
       query: ({cognitoId, ...updatedTenant}) =>({
         url: `tenants/${cognitoId}`,
-        method: "PUT",,
+        method: "PUT",
         body: updatedTenant
       }),
       invalidatesTags: (result)=>[{
          type: "Tenants", id: result?.id
       }],
     }),
-    updateManagerSettings = build.mutation<Tenant, {cognitoId: string} & Partial<Manager>>({
+    updateManagerSettings:build.mutation<Tenant, {cognitoId: string} & Partial<Manager>>({
       query: ({cognitoId, ...updatedManager}) =>({
         url: `managers/${cognitoId}`,
-        method: "PUT",,
+        method: "PUT",
         body: updatedManager
       }),
       invalidatesTags: (result)=>[{
