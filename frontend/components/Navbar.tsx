@@ -1,3 +1,4 @@
+"use client";
 import { NAVBAR_HEIGHT } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,9 +35,7 @@ const Navbar = () => {
       <div className="flex justify-between items-center w-full py-3 px-8 bg-primary-700 text-white">
         <div className="flex items-center gap-4 md:gap-6">
           {isDashboardPage && (
-            <div className="md:hidden">
-              {/* <SidebarTrigger /> */}
-            </div>
+            <div className="md:hidden">{/* <SidebarTrigger /> */}</div>
           )}
           <Link
             href="/"
