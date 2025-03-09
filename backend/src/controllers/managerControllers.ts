@@ -53,7 +53,7 @@ export const updateManager = async (
   try {
     const {cognitoId} = req.params
     const { name, email, phoneNumber } = req.body;
-    const updateManager = await prisma.tenant.update({
+    const updateManager = await prisma.manager.update({
       where:{
         cognitoId, 
       },

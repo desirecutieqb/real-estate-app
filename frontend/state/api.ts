@@ -68,7 +68,7 @@ export const api = createApi({
       invalidatesTags: (result) => [{ type: "Tenants", id: result?.id }],
     }),
     updateManagerSettings: build.mutation<
-      Tenant,
+      Manager,
       { cognitoId: string } & Partial<Manager>
     >({
       query: ({ cognitoId, ...updatedManager }) => ({
