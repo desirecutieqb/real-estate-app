@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { wktToGeoJSON } from "@terraformer/wkt";
 
 const prisma = new PrismaClient();
 
@@ -51,11 +52,11 @@ export const updateManager = async (
   res: Response
 ): Promise<void> => {
   try {
-    const {cognitoId} = req.params
+    const { cognitoId } = req.params;
     const { name, email, phoneNumber } = req.body;
     const updateManager = await prisma.manager.update({
-      where:{
-        cognitoId, 
+      where: {
+        cognitoId,
       },
       data: {
         name,
@@ -63,11 +64,54 @@ export const updateManager = async (
         phoneNumber,
       },
     });
-    res.json(updateManager)
-
+    res.json(updateManager);
   } catch (error: any) {
     res
       .status(500)
       .json({ message: `Error updating manager: ${error.message}` });
+  }
+};
+export const getManagerProperties = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cognitoId } = req.params;
+    const properties = await prisma.property.findMany({
+      where: { managerCognitoId: cognitoId },
+      include: {
+        location: true,
+      },
+    });
+
+    const propertiesWithFormattedLocation = await Promise.all(
+      properties.map(async (property) => {
+        const coordinates: {
+          coordinates: string;
+        }[] =
+          await prisma.$queryRaw`SELECT ST_asText(coordinates) AS coordinates FROM "Location" WHERE id = ${property.location.id}`;
+
+        const geoJSON: any = wktToGeoJSON(coordinates[0]?.coordinates || "");
+        const longitude = geoJSON.coordinates[0];
+        const latitude = geoJSON.coordinates[1];
+
+        return {
+          ...coordinates,
+          location: {
+            ...property.location,
+            coordinates: {
+              longitude,
+              latitude,
+            },
+          },
+        };
+      })
+    );
+
+    res.json(propertiesWithFormattedLocation);
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: `Error retrieving manager properties: ${error.message}` });
   }
 };
