@@ -5,5 +5,5 @@ import {
 const router = express.Router();
 router.get("/:cognitoId",getTenant);
 router.post("/",createTenant);
-router.put("/:codnitoId", updateTenant)
+router.put("/:cognitoId", updateTenant)
 export default router;

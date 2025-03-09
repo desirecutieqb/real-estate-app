@@ -53,9 +53,9 @@ export const updateTenant = async (
   try {
     const { cognitoId } = req.params;
     const { name, email, phoneNumber } = req.body;
-console.log("cognito id: ",cognitoId);
+    console.log(req.params);
     const updateTenant = await prisma.tenant.update({
-      where: { cognitoId: cognitoId, },
+      where: { cognitoId },
       data: {
         name,
         email,
